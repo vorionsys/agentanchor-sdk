@@ -1,0 +1,80 @@
+{
+  "name": "@vorionsys/agentanchor-sdk",
+  "version": "0.1.0",
+  "description": "Official SDK for Agent Anchor - AI agent registry, trust scoring, and attestations",
+  "keywords": [
+    "ai",
+    "agent",
+    "trust",
+    "governance",
+    "aci",
+    "attestation",
+    "sdk",
+    "agentanchor"
+  ],
+  "license": "Apache-2.0",
+  "author": "Vorion LLC",
+  "homepage": "https://agentanchorai.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vorionsys/agentanchor-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vorionsys/agentanchor-sdk/issues"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./car": {
+      "types": "./dist/car/index.d.ts",
+      "import": "./dist/car/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@vorionsys/shared-constants": "^2.0.0",
+    "zod": "^3.23.0"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.31.0",
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.2",
+    "vitest": "^4.0.18"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true,
+    "registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build",
+    "changeset:version": "changeset version && npm install --package-lock-only",
+    "changeset:release": "changeset publish"
+  }
+}
