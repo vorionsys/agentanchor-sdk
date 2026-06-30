@@ -1,6 +1,6 @@
 {
   "name": "@vorionsys/agentanchor-sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Official SDK for Agent Anchor - AI agent registry, trust scoring, and attestations",
   "keywords": [
     "ai",
