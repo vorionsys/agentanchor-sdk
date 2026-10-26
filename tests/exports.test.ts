@@ -54,7 +54,7 @@ describe("agentanchor-sdk exports", () => {
   });
 
   it("exports DEFAULT_CONFIG", () => {
-    expect(DEFAULT_CONFIG.baseUrl).toContain("agentanchor");
+    expect("baseUrl" in DEFAULT_CONFIG).toBe(false);
     expect(DEFAULT_CONFIG.timeout).toBe(30000);
     expect(DEFAULT_CONFIG.retries).toBe(3);
     expect(DEFAULT_CONFIG.debug).toBe(false);
@@ -111,9 +111,44 @@ describe("AgentAnchor constructor", () => {
     }
   });
 
-  it("constructs with valid apiKey", () => {
-    const anchor = new AgentAnchor({ apiKey: "test-key-123" });
+  it("constructs with valid apiKey and baseUrl", () => {
+    const anchor = new AgentAnchor({
+      apiKey: "test-key-123",
+      baseUrl: "https://anchor.example.com",
+    });
     expect(anchor).toBeInstanceOf(AgentAnchor);
+  });
+
+  it("throws VALIDATION_ERROR when baseUrl is missing", () => {
+    expect(
+      () => new AgentAnchor({ apiKey: "test-key" } as never),
+    ).toThrow("baseUrl is required");
+    try {
+      new AgentAnchor({ apiKey: "test-key" } as never);
+    } catch (e) {
+      expect((e as AgentAnchorError).code).toBe(SDKErrorCode.VALIDATION_ERROR);
+    }
+  });
+
+  it("rejects a baseUrl that is not an absolute URL", () => {
+    expect(
+      () => new AgentAnchor({ apiKey: "test-key", baseUrl: "anchor.example.com" }),
+    ).toThrow("baseUrl must be an absolute URL");
+  });
+
+  it("rejects plain http for a remote host", () => {
+    expect(
+      () =>
+        new AgentAnchor({ apiKey: "test-key", baseUrl: "http://anchor.example.com" }),
+    ).toThrow("baseUrl must use https");
+  });
+
+  it("allows plain http for localhost", () => {
+    for (const baseUrl of ["http://localhost:8787", "http://127.0.0.1:8787"]) {
+      expect(new AgentAnchor({ apiKey: "test-key", baseUrl })).toBeInstanceOf(
+        AgentAnchor,
+      );
+    }
   });
 
   it("accepts custom config", () => {
@@ -129,7 +164,10 @@ describe("AgentAnchor constructor", () => {
 });
 
 describe("AgentAnchor validation methods", () => {
-  const anchor = new AgentAnchor({ apiKey: "test-key" });
+  const anchor = new AgentAnchor({
+    apiKey: "test-key",
+    baseUrl: "https://anchor.example.com",
+  });
 
   it("validates valid CAR IDs", () => {
     const result = anchor.validateCAR(

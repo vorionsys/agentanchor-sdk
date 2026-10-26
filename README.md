@@ -17,9 +17,10 @@ pnpm add @vorionsys/agentanchor-sdk
 ```typescript
 import { AgentAnchor, CapabilityLevel, AttestationType } from '@vorionsys/agentanchor-sdk';
 
-// Initialize the client
+// Initialize the client. baseUrl is required: there is no default host.
 const anchor = new AgentAnchor({
   apiKey: 'your-api-key',
+  baseUrl: 'https://your-agent-anchor-host.example',
 });
 
 // Register an agent
@@ -212,12 +213,15 @@ try {
 ```typescript
 const anchor = new AgentAnchor({
   apiKey: 'your-api-key',
-  baseUrl: 'https://api.agentanchor.io', // Custom API URL
-  timeout: 30000,                         // Request timeout (ms)
-  retries: 3,                             // Retry attempts
-  debug: false,                           // Enable debug logging
+  baseUrl: 'https://your-agent-anchor-host.example', // Required; https (http only for localhost)
+  timeout: 30000,                                    // Request timeout (ms)
+  retries: 3,                                        // Retry attempts
+  debug: false,                                      // Enable debug logging
 });
 ```
+
+`baseUrl` has no default. Versions before 0.2.0 sent requests, including the
+API key, to `https://api.agentanchor.io` when it was omitted.
 
 ## TypeScript Support
 

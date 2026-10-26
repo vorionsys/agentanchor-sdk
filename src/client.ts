@@ -35,13 +35,46 @@ import {
 } from "./car/index.js";
 
 /**
+ * Check the base URL every request (and its API key) is sent to. There is no
+ * default host: a fallback would send keys somewhere the caller never chose.
+ */
+function validateBaseUrl(baseUrl: string | undefined): string {
+  if (!baseUrl) {
+    throw new AgentAnchorError(
+      SDKErrorCode.VALIDATION_ERROR,
+      "baseUrl is required: the SDK has no default API host",
+    );
+  }
+  let url: URL;
+  try {
+    url = new URL(baseUrl);
+  } catch {
+    throw new AgentAnchorError(
+      SDKErrorCode.VALIDATION_ERROR,
+      `baseUrl must be an absolute URL, got "${baseUrl}"`,
+    );
+  }
+  const local = url.hostname === "localhost" || url.hostname === "127.0.0.1";
+  if (url.protocol !== "https:" && !(url.protocol === "http:" && local)) {
+    throw new AgentAnchorError(
+      SDKErrorCode.VALIDATION_ERROR,
+      "baseUrl must use https (http is allowed for localhost only)",
+    );
+  }
+  return baseUrl;
+}
+
+/**
  * Agent Anchor SDK Client
  *
  * @example
  * ```typescript
  * import { AgentAnchor } from '@vorionsys/agentanchor-sdk';
  *
- * const anchor = new AgentAnchor({ apiKey: 'your-api-key' });
+ * const anchor = new AgentAnchor({
+ *   apiKey: 'your-api-key',
+ *   baseUrl: 'https://your-agent-anchor-host.example',
+ * });
  *
  * // Register an agent
  * const agent = await anchor.registerAgent({
@@ -70,7 +103,7 @@ export class AgentAnchor {
 
     this.config = {
       apiKey: config.apiKey,
-      baseUrl: config.baseUrl ?? DEFAULT_CONFIG.baseUrl,
+      baseUrl: validateBaseUrl(config.baseUrl),
       timeout: config.timeout ?? DEFAULT_CONFIG.timeout,
       retries: config.retries ?? DEFAULT_CONFIG.retries,
       debug: config.debug ?? DEFAULT_CONFIG.debug,
