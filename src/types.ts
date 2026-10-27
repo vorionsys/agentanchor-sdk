@@ -23,8 +23,12 @@ export interface AgentAnchorConfig {
   /** API key for authentication */
   apiKey: string;
 
-  /** Base URL for the Agent Anchor API (defaults to production) */
-  baseUrl?: string;
+  /**
+   * Base URL of the Agent Anchor API. Required: the SDK has no default host,
+   * so your API key only goes where you point it. Must be https (plain http
+   * is allowed for localhost only).
+   */
+  baseUrl: string;
 
   /** Request timeout in milliseconds (default: 30000) */
   timeout?: number;
@@ -40,7 +44,6 @@ export interface AgentAnchorConfig {
  * Default configuration values
  */
 export const DEFAULT_CONFIG = {
-  baseUrl: "https://api.agentanchor.io",
   timeout: 30000,
   retries: 3,
   debug: false,

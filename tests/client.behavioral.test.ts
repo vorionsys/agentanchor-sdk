@@ -13,7 +13,6 @@ import {
   AgentAnchor,
   AgentAnchorError,
   SDKErrorCode,
-  DEFAULT_CONFIG,
 } from "../src/index.js";
 
 // ---------------------------------------------------------------------------
@@ -22,12 +21,14 @@ import {
 
 const VALID_CAR = "a3i.acme.test-agent:A-L0@1.0.0";
 const INVALID_CAR = "bad-car";
+const BASE_URL = "https://anchor.example.com";
 
 let mockFetch: ReturnType<typeof vi.fn>;
 
 function createClient(overrides: Record<string, unknown> = {}): AgentAnchor {
   return new AgentAnchor({
     apiKey: "test-api-key-123",
+    baseUrl: BASE_URL,
     retries: 0, // no retries by default for simpler tests
     timeout: 5000,
     ...overrides,
@@ -105,7 +106,7 @@ describe("AgentAnchor HTTP client behavioral", () => {
 
       expect(mockFetch).toHaveBeenCalledOnce();
       const [url, opts] = mockFetch.mock.calls[0];
-      expect(url).toBe(`${DEFAULT_CONFIG.baseUrl}/v1/agents`);
+      expect(url).toBe(`${BASE_URL}/v1/agents`);
       expect(opts.method).toBe("POST");
       expect(JSON.parse(opts.body)).toEqual(agentData);
       expect(opts.headers.Authorization).toBe("Bearer test-api-key-123");
